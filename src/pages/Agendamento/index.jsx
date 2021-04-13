@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Form, Formik, Field, ErrorMessage,
 } from 'formik';
@@ -7,16 +7,34 @@ import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import Page from '../../components/Page';
 import DatePickerType from './dataPickerType';
+import { AppContext } from '../../AppContextProvider';
+// import axios from '../../utils/api';
 
 export default function index() {
-  const onSubmit = (values) => {
+  const [agendamentos, setAgendamentos] = useContext(AppContext);
+
+  const onSubmit = async (values) => {
+    // Versão de testes
+    console.log(values);
+    setAgendamentos([...agendamentos, values]);
+    console.log(agendamentos);
     toast.info(JSON.stringify(values, null, 2));
-    // history.push('/[outra rota]'); (sugestão)
+    // --------------------------------------------------------------
+    // Comentado até finalizar o backend
+    // try {
+    //   const response = await axios.post('/agendamento', values);
+
+    //   setAgendamentos([...agendamentos, response.data.data]);
+
+    //   toast.info('Agendamento criado!');
+    // } catch (e) {
+    //   console.log(e.message);
+    // }
   };
   const validationSchema = Yup.object().shape({
     nome: Yup.string().required('O campo do nome é obrigatório'),
     dataNasc: Yup.date().required('O campo da data de nascimento é obrigatório'),
-    dataAgend: Yup.date().required('O campo da data e horário do agendamento é obrigatório'),
+    dataHoraAgend: Yup.date().required('O campo da data e horário do agendamento é obrigatório'),
   });
   return (
     <Page title="Realizar Agendamento">
@@ -24,7 +42,7 @@ export default function index() {
         initialValues={{
           nome: '',
           dataNasc: '',
-          dataAgend: '',
+          dataHoraAgend: '',
         }}
         validationSchema={validationSchema}
         onSubmit={onSubmit}
@@ -52,16 +70,16 @@ export default function index() {
                 </ErrorMessage>
               </div>
               <div className="form-group">
-                <label htmlFor="dataAgend" className="form-label">Informe a data e horário do agendamento: </label>
+                <label htmlFor="dataHoraAgend" className="form-label">Informe a data e horário do agendamento: </label>
                 <br />
                 <DatePickerType
-                  name="dataAgend"
-                  value={values.dataAgend}
+                  name="dataHoraAgend"
+                  value={values.dataHoraAgend}
                   onChange={setFieldValue}
                   className="form-control"
                 />
                 <br />
-                <ErrorMessage name="dataAgend">
+                <ErrorMessage name="dataHoraAgend">
                   { (msg) => <div style={{ color: 'red' }}>{msg}</div> }
                 </ErrorMessage>
               </div>

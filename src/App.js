@@ -1,10 +1,11 @@
 import React from 'react';
 import Routes from './routes';
+import AppContextProvider from './AppContextProvider';
 
 const App = () => (
-  <div className="App">
+  <AppContextProvider>
     <Routes />
-  </div>
+  </AppContextProvider>
 );
 
 export default App;

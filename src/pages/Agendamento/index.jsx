@@ -8,28 +8,21 @@ import * as Yup from 'yup';
 import Page from '../../components/Page';
 import DatePickerType from './dataPickerType';
 import { AppContext } from '../../AppContextProvider';
-// import axios from '../../utils/api';
+import axios from '../../utils/api';
 
 export default function index() {
   const [agendamentos, setAgendamentos] = useContext(AppContext);
 
   const onSubmit = async (values) => {
-    // Versão de testes
-    console.log(values);
-    setAgendamentos([...agendamentos, values]);
-    console.log(agendamentos);
-    toast.info(JSON.stringify(values, null, 2));
-    // --------------------------------------------------------------
-    // Comentado até finalizar o backend
-    // try {
-    //   const response = await axios.post('/agendamento', values);
+    try {
+      const response = await axios.post('/agendamento', values);
 
-    //   setAgendamentos([...agendamentos, response.data.data]);
+      setAgendamentos([...agendamentos, response.data.data]);
 
-    //   toast.info('Agendamento criado!');
-    // } catch (e) {
-    //   console.log(e.message);
-    // }
+      toast.info('Agendamento criado!');
+    } catch (e) {
+      toast.error(e.message);
+    }
   };
   const validationSchema = Yup.object().shape({
     nome: Yup.string().required('O campo do nome é obrigatório'),

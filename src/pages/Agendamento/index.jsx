@@ -15,7 +15,9 @@ export default function index() {
 
   const onSubmit = async (values) => {
     try {
-      const response = await axios.post('/agendamento', values);
+      const response = await axios.post('/agendamento', {
+        ...values, idoso: false, atendido: false, conclusao: '',
+      });
 
       setAgendamentos([...agendamentos, response.data.data]);
 

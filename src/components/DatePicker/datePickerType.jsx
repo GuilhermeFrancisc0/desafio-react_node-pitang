@@ -7,6 +7,12 @@ import setMinutes from 'date-fns/setMinutes';
 export default function DatePickerType({
   name, value, onChange, className,
 }) {
+  const filterPassedTime = (time) => {
+    const currentDate = new Date();
+    const selectedDate = new Date(time);
+
+    return currentDate.getTime() < selectedDate.getTime();
+  };
   return (
     <DatePicker
       className={className}
@@ -17,6 +23,7 @@ export default function DatePickerType({
       maxTime={setHours(setMinutes(new Date(), 30), 17)}
       dateFormat="dd/MM/yyyy H:mm"
       timeFormat="HH:mm"
+      filterTime={filterPassedTime}
       minDate={new Date()}
     />
   );

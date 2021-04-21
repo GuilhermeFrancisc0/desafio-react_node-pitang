@@ -121,6 +121,7 @@ export default function ListaAgendamento() {
                     )
                   </th>
                   <th width="33%">Nome</th>
+                  <th>Idoso</th>
                   <th>Área do enfermeiro</th>
                 </tr>
               </thead>
@@ -129,6 +130,7 @@ export default function ListaAgendamento() {
                   <tr key={i}>
                     <td>{formatarHorario(agendamento.dataHoraAgend)}</td>
                     <td>{agendamento.nome}</td>
+                    <td>{agendamento.idoso ? 'Sim' : 'Não'}</td>
                     <td>
                       <label htmlFor="atendidoCheckbox">
                         <input

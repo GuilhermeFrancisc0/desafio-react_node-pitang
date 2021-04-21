@@ -4,7 +4,6 @@ import React, { useContext, useState } from 'react';
 import { Table, Form } from 'react-bootstrap';
 import format from 'date-fns/format';
 import formatISO9075 from 'date-fns/formatISO9075';
-// import getMinutes from 'date-fns/getMinutes';
 import { toast } from 'react-toastify';
 import Page from '../../components/Page';
 import { AppContext } from '../../AppContextProvider';
@@ -12,18 +11,18 @@ import axios from '../../utils/api';
 import Modal from '../../components/Modal';
 
 export default function ListaAgendamento() {
-  const [agendamentos, setAgendamentos] = useContext(AppContext);
+  const [agendamentos, setAgendamentos, fetchData] = useContext(AppContext);
   const agendamentosSorted = [...agendamentos]; // ordenado por ordem de Agendamento
   const [conclusaoAgendamento, setConclusaoAgendamento] = useState({});
-  const [showModal, setShowModal] = useState(false); //
-  const [text, setText] = useState(''); //
+  const [showModal, setShowModal] = useState(false);
+  const [text, setText] = useState('');
 
   function formatarHorario(data) {
     return format(new Date(data), 'HH:mm');
   }
   function formatarData(data) {
     const arrData = data.split('-');
-    return (`${arrData[2]}/${arrData[1]}/${arrData[0]}`);
+    return `${arrData[2]}/${arrData[1]}/${arrData[0]}`;
   }
 
   agendamentosSorted.sort((a, b) => new Date(a.dataHoraAgend) - new Date(b.dataHoraAgend));
@@ -45,9 +44,7 @@ export default function ListaAgendamento() {
     agendamento: grupos[dataAgendamento],
   }));
 
-  // console.log(gruposAgendamentos);
-
-  // ----------------Área do enfermeiro--------------------------
+  // ----------------Área do enfermeiro-------------------------- //
 
   const handleChecked = async (event, agendamentoChecked) => {
     const { checked: atendido } = event.target;
@@ -61,7 +58,10 @@ export default function ListaAgendamento() {
       return agendamento;
     });
     try {
-      await axios.put(`/agendamento/${agendamentoChecked._id}`, { ...agendamentoChecked, atendido });
+      await axios.put(`/agendamento/${agendamentoChecked._id}`, {
+        ...agendamentoChecked,
+        atendido,
+      });
 
       setAgendamentos(newAgendamentos);
       if (agendamentoChecked.atendido) {
@@ -69,9 +69,9 @@ export default function ListaAgendamento() {
       } else if (!agendamentoChecked.atendido) {
         toast.info(`Paciente "${agendamentoChecked.nome}" atendido!`);
       }
+      fetchData();
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log(e.message);
+      toast.error(e.message);
     }
   };
 
@@ -79,6 +79,7 @@ export default function ListaAgendamento() {
     setConclusaoAgendamento(agendamento);
     setText(agendamento?.conclusao);
     setShowModal(!showModal);
+    fetchData();
   };
 
   const onConclusaoAgendamento = async () => {
@@ -92,14 +93,18 @@ export default function ListaAgendamento() {
       return agendamento;
     });
     try {
-      await axios.put(`/agendamento/${conclusaoAgendamento._id}`, { ...conclusaoAgendamento, conclusao: text });
+      await axios.put(`/agendamento/${conclusaoAgendamento._id}`, {
+        ...conclusaoAgendamento,
+        conclusao: text,
+      });
 
       setAgendamentos(newAgendamentos);
-      toast.info(`Conclusão do atendimento de ${conclusaoAgendamento.nome} editado!`);
-      handleConclusao();
+      toast.info(
+        `Conclusão do atendimento de ${conclusaoAgendamento.nome} editado!`,
+      );
+      handleConclusao(conclusaoAgendamento);
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log(e.message);
+      toast.error(e.message);
     }
   };
   return (
@@ -135,7 +140,11 @@ export default function ListaAgendamento() {
                         {' '}
                         Atendido
                       </label>
-                      <button className="btn btn-primary ml-2" type="button" onClick={() => handleConclusao(agendamento)}>
+                      <button
+                        className="btn btn-primary ml-2"
+                        type="button"
+                        onClick={() => handleConclusao(agendamento)}
+                      >
                         {' Conclusão'}
                       </button>
                     </td>
@@ -143,21 +152,23 @@ export default function ListaAgendamento() {
                 ))}
               </tbody>
             </Table>
-          ))) : (
-            <span className="empty-state">
-              Não há nenhum agendamento
-            </span>
+          ))
+        ) : (
+          <span className="empty-state">Não há nenhum agendamento</span>
         )}
         <Modal
           onSubmit={onConclusaoAgendamento}
           show={showModal}
-          toggle={() => handleConclusao()}
+          toggle={() => handleConclusao(conclusaoAgendamento)}
           title={`Paciente: ${conclusaoAgendamento?.nome}`}
         >
           <Form>
             <Form.Group>
               <Form.Label>Conclusão do atendimento:</Form.Label>
-              <Form.Control value={text} onChange={({ target: { value } }) => setText(value)} />
+              <Form.Control
+                value={text}
+                onChange={({ target: { value } }) => setText(value)}
+              />
             </Form.Group>
           </Form>
         </Modal>

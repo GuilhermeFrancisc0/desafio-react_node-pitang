@@ -4,7 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import setHours from 'date-fns/setHours';
 import setMinutes from 'date-fns/setMinutes';
 
-export default function DataPickerType({
+export default function DatePickerType({
   name, value, onChange, className,
 }) {
   return (

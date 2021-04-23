@@ -133,7 +133,7 @@ export default function index() {
                 {(msg) => <div style={{ color: 'red' }}>{msg}</div>}
               </ErrorMessage>
             </div>
-            <button className="btn btn-primary mt-2" type="submit">
+            <button className="btn btn-primary mt-2" type="submit" disabled={!props.isValid}>
               Efetuar Agendamento
             </button>
           </Form>
